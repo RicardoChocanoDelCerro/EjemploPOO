@@ -30,46 +30,56 @@ class Personaje:
         self.vida = 0
         return f"{self.nombre} ha muerto."
 
+    def daño(self, enemigo):
+        daño_infligido = max(0, self.fuerza - enemigo.defensa)
+        enemigo.vida = max(0, enemigo.vida - daño_infligido)
+        return daño_infligido
+
 # Aplicación Streamlit
 st.title("Personaje en Streamlit")
 
-# Input inicial
-nombre = st.text_input("Nombre del personaje", "Ricardo")
-fuerza = st.number_input("Fuerza inicial", value=10)
-inteligencia = st.number_input("Inteligencia inicial", value=1)
-defensa = st.number_input("Defensa inicial", value=5)
-vida = st.number_input("Vida inicial", value=100)
-
-# Crear personaje
+# Crear Personaje Principal
+st.header("Personaje Principal")
+nombre = st.text_input("Nombre del personaje", "Ricardo", key="nombre_personaje")
+fuerza = st.number_input("Fuerza inicial", value=10, key="fuerza_personaje")
+inteligencia = st.number_input("Inteligencia inicial", value=1, key="inteligencia_personaje")
+defensa = st.number_input("Defensa inicial", value=5, key="defensa_personaje")
+vida = st.number_input("Vida inicial", value=100, key="vida_personaje")
 mi_personaje = Personaje(nombre, fuerza, inteligencia, defensa, vida)
 
-# Mostrar atributos iniciales
-if st.button("Mostrar atributos"):
-    st.text(mi_personaje.atributos())
+# Crear Enemigo
+st.header("Enemigo")
+nombre_enemigo = st.text_input("Nombre del enemigo", "Jose A", key="nombre_enemigo")
+fuerza_enemigo = st.number_input("Fuerza inicial", value=8, key="fuerza_enemigo")
+inteligencia_enemigo = st.number_input("Inteligencia inicial", value=5, key="inteligencia_enemigo")
+defensa_enemigo = st.number_input("Defensa inicial", value=3, key="defensa_enemigo")
+vida_enemigo = st.number_input("Vida inicial", value=100, key="vida_enemigo")
+mi_enemigo = Personaje(nombre_enemigo, fuerza_enemigo, inteligencia_enemigo, defensa_enemigo, vida_enemigo)
 
-# Subir nivel
+# Mostrar atributos
+if st.button("Mostrar atributos de ambos personajes"):
+    st.text("Atributos del Personaje Principal:")
+    st.text(mi_personaje.atributos())
+    st.text("Atributos del Enemigo:")
+    st.text(mi_enemigo.atributos())
+
+# Realizar ataque
+st.header("Realizar ataque")
+if st.button("Atacar enemigo"):
+    daño = mi_personaje.daño(mi_enemigo)
+    st.success(f"{mi_personaje.nombre} infligió {daño} de daño a {mi_enemigo.nombre}.")
+    st.text("Atributos del enemigo después del ataque:")
+    st.text(mi_enemigo.atributos())
+    if not mi_enemigo.esta_vivo():
+        st.error(f"{mi_enemigo.nombre} ha muerto.")
+
+# Subir nivel al personaje principal
 st.header("Subir de nivel")
-fuerza_nueva = st.number_input("Incremento de fuerza", value=1, key="fuerza_nueva")
-inteligencia_nueva = st.number_input("Incremento de inteligencia", value=2, key="inteligencia_nueva")
-defensa_nueva = st.number_input("Incremento de defensa", value=0, key="defensa_nueva")
+fuerza_nueva = st.number_input("Incremento de fuerza", value=1, key="fuerza_subir")
+inteligencia_nueva = st.number_input("Incremento de inteligencia", value=2, key="inteligencia_subir")
+defensa_nueva = st.number_input("Incremento de defensa", value=0, key="defensa_subir")
 
-if st.button("Subir nivel"):
+if st.button("Subir nivel del personaje principal"):
     mi_personaje.subir_nivel(fuerza_nueva, inteligencia_nueva, defensa_nueva)
-    st.text("Atributos después de subir de nivel:")
-    st.text(mi_personaje.atributos())
-
-# Comprobar si el personaje está vivo
-st.header("¿Está vivo?")
-if st.button("Comprobar estado de vida"):
-    if mi_personaje.esta_vivo():
-        st.success(f"{mi_personaje.nombre} está vivo.")
-    else:
-        st.error(f"{mi_personaje.nombre} está muerto.")
-
-# Acción de morir
-st.header("Acción: Matar al personaje")
-if st.button("Matar personaje"):
-    resultado_morir = mi_personaje.morir()
-    st.error(resultado_morir)
-    st.text("Estado después de morir:")
+    st.success("Personaje principal subió de nivel.")
     st.text(mi_personaje.atributos())
