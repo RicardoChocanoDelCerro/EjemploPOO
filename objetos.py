@@ -73,16 +73,18 @@ if "vanessa" not in st.session_state:
     st.session_state.vanessa = Mago("Vanessa", 20, 15, 10, 100, 5)
 
 # Aplicación Streamlit
-st.title("⚔️ Simulador de Combate RPG con Actualizaciones Dinámicas")
+st.title("⚔️ Simulador de Combate RPG con Atributos Dinámicos")
 
-# Mostrar atributos de los personajes
+# Mostrar atributos de los personajes dinámicamente
 st.header("Atributos de los Personajes")
-st.text("Goku:")
-st.text(st.session_state.goku.atributos())
-st.text("Guts:")
-st.text(st.session_state.guts.atributos())
-st.text("Vanessa:")
-st.text(st.session_state.vanessa.atributos())
+st.subheader("Estado actual")
+with st.container():
+    st.text("Goku:")
+    st.text(st.session_state.goku.atributos())
+    st.text("Guts:")
+    st.text(st.session_state.guts.atributos())
+    st.text("Vanessa:")
+    st.text(st.session_state.vanessa.atributos())
 
 # Atacar entre personajes
 st.header("⚔️ Realizar Ataques")
