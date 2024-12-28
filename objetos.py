@@ -23,6 +23,9 @@ class Personaje:
         self.inteligencia += inteligencia
         self.defensa += defensa
 
+    def esta_vivo(self):
+        return self.vida > 0
+
 # Aplicación Streamlit
 st.title("Personaje en Streamlit")
 
@@ -42,11 +45,19 @@ if st.button("Mostrar atributos"):
 
 # Subir nivel
 st.header("Subir de nivel")
-fuerza_nueva = st.number_input("Incremento de fuerza", value=1)
-inteligencia_nueva = st.number_input("Incremento de inteligencia", value=2)
-defensa_nueva = st.number_input("Incremento de defensa", value=0)
+fuerza_nueva = st.number_input("Incremento de fuerza", value=1, key="fuerza_nueva")
+inteligencia_nueva = st.number_input("Incremento de inteligencia", value=2, key="inteligencia_nueva")
+defensa_nueva = st.number_input("Incremento de defensa", value=0, key="defensa_nueva")
 
 if st.button("Subir nivel"):
     mi_personaje.subir_nivel(fuerza_nueva, inteligencia_nueva, defensa_nueva)
     st.text("Atributos después de subir de nivel:")
     st.text(mi_personaje.atributos())
+
+# Comprobar si el personaje está vivo
+st.header("¿Está vivo?")
+if st.button("Comprobar estado de vida"):
+    if mi_personaje.esta_vivo():
+        st.success(f"{mi_personaje.nombre} está vivo.")
+    else:
+        st.error(f"{mi_personaje.nombre} está muerto.")
