@@ -26,6 +26,10 @@ class Personaje:
     def esta_vivo(self):
         return self.vida > 0
 
+    def morir(self):
+        self.vida = 0
+        return f"{self.nombre} ha muerto."
+
 # Aplicación Streamlit
 st.title("Personaje en Streamlit")
 
@@ -61,3 +65,11 @@ if st.button("Comprobar estado de vida"):
         st.success(f"{mi_personaje.nombre} está vivo.")
     else:
         st.error(f"{mi_personaje.nombre} está muerto.")
+
+# Acción de morir
+st.header("Acción: Matar al personaje")
+if st.button("Matar personaje"):
+    resultado_morir = mi_personaje.morir()
+    st.error(resultado_morir)
+    st.text("Estado después de morir:")
+    st.text(mi_personaje.atributos())
