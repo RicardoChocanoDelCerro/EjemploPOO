@@ -72,13 +72,8 @@ if "guts" not in st.session_state:
 if "vanessa" not in st.session_state:
     st.session_state.vanessa = Mago("Vanessa", 20, 15, 10, 100, 5)
 
-# Aplicación Streamlit
-st.title("⚔️ Simulador de Combate RPG con Atributos Dinámicos")
-
-# Mostrar atributos de los personajes dinámicamente
-st.header("Atributos de los Personajes")
-st.subheader("Estado actual")
-with st.container():
+# Función para mostrar atributos de todos los personajes
+def mostrar_atributos():
     st.text("Goku:")
     st.text(st.session_state.goku.atributos())
     st.text("Guts:")
@@ -86,19 +81,30 @@ with st.container():
     st.text("Vanessa:")
     st.text(st.session_state.vanessa.atributos())
 
+# Aplicación Streamlit
+st.title("⚔️ Simulador de Combate RPG con Atributos Actualizables")
+
+# Mostrar atributos de los personajes dinámicamente
+st.header("Atributos de los Personajes")
+with st.container():
+    mostrar_atributos()
+
 # Atacar entre personajes
 st.header("⚔️ Realizar Ataques")
 if st.button("Goku ataca a Guts"):
     resultado = st.session_state.goku.atacar(st.session_state.guts)
     st.success(resultado)
+    st.experimental_rerun()  # Actualizar toda la página
 
 if st.button("Guts ataca a Vanessa"):
     resultado = st.session_state.guts.atacar(st.session_state.vanessa)
     st.success(resultado)
+    st.experimental_rerun()  # Actualizar toda la página
 
 if st.button("Vanessa ataca a Goku"):
     resultado = st.session_state.vanessa.atacar(st.session_state.goku)
     st.success(resultado)
+    st.experimental_rerun()  # Actualizar toda la página
 
 # Cambiar arma del Guerrero
 st.header("🗡️ Cambiar Arma de Guts")
@@ -113,3 +119,4 @@ if st.button("Cambiar arma de Guts"):
         st.info(st.session_state.guts.cambiar_arma(1))
     else:
         st.info(st.session_state.guts.cambiar_arma(2))
+    st.experimental_rerun()  # Actualizar toda la página
