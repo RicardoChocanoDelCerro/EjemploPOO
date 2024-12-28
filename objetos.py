@@ -36,10 +36,16 @@ class Personaje:
     def atacar(self, enemigo):
         daño = self.daño(enemigo)
         enemigo.vida = max(0, enemigo.vida - daño)
-        return f"{self.nombre} ha realizado {daño} puntos de daño a {enemigo.nombre}. La vida de {enemigo.nombre} ahora es {enemigo.vida}."
+        resultado = f"{self.nombre} ha realizado {daño} puntos de daño a {enemigo.nombre}."
+        if enemigo.esta_vivo():
+            resultado += f" La vida de {enemigo.nombre} ahora es {enemigo.vida}."
+        else:
+            resultado += f" {enemigo.nombre} ha muerto."
+            enemigo.morir()
+        return resultado
 
 # Aplicación Streamlit
-st.title("Personaje en Streamlit")
+st.title("Simulación de Personajes en Streamlit")
 
 # Crear Personaje Principal
 st.header("Personaje Principal")
@@ -73,8 +79,6 @@ if st.button("Atacar enemigo"):
     st.success(resultado_ataque)
     st.text("Atributos del enemigo después del ataque:")
     st.text(mi_enemigo.atributos())
-    if not mi_enemigo.esta_vivo():
-        st.error(f"{mi_enemigo.nombre} ha muerto.")
 
 # Subir nivel al personaje principal
 st.header("Subir de nivel")
