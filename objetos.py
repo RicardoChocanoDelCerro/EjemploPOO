@@ -31,9 +31,12 @@ class Personaje:
         return f"{self.nombre} ha muerto."
 
     def daño(self, enemigo):
-        daño_infligido = max(0, self.fuerza - enemigo.defensa)
-        enemigo.vida = max(0, enemigo.vida - daño_infligido)
-        return daño_infligido
+        return max(0, self.fuerza - enemigo.defensa)
+
+    def atacar(self, enemigo):
+        daño = self.daño(enemigo)
+        enemigo.vida = max(0, enemigo.vida - daño)
+        return f"{self.nombre} ha realizado {daño} puntos de daño a {enemigo.nombre}. La vida de {enemigo.nombre} ahora es {enemigo.vida}."
 
 # Aplicación Streamlit
 st.title("Personaje en Streamlit")
@@ -66,8 +69,8 @@ if st.button("Mostrar atributos de ambos personajes"):
 # Realizar ataque
 st.header("Realizar ataque")
 if st.button("Atacar enemigo"):
-    daño = mi_personaje.daño(mi_enemigo)
-    st.success(f"{mi_personaje.nombre} infligió {daño} de daño a {mi_enemigo.nombre}.")
+    resultado_ataque = mi_personaje.atacar(mi_enemigo)
+    st.success(resultado_ataque)
     st.text("Atributos del enemigo después del ataque:")
     st.text(mi_enemigo.atributos())
     if not mi_enemigo.esta_vivo():
