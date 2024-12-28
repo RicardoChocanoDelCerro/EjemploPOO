@@ -11,11 +11,11 @@ class Personaje:
 
     def atributos(self):
         return f"""
-        {self.nombre}:
+        ⚔️ {self.nombre}:
         - Fuerza: {self.fuerza}
         - Inteligencia: {self.inteligencia}
         - Defensa: {self.defensa}
-        - Vida: {self.vida}
+        - ❤️ Vida: {self.vida}
         """
 
     def subir_nivel(self, fuerza, inteligencia, defensa):
@@ -28,7 +28,7 @@ class Personaje:
 
     def morir(self):
         self.vida = 0
-        return f"{self.nombre} ha muerto."
+        return f"💀 {self.nombre} ha muerto."
 
     def daño(self, enemigo):
         return max(0, self.fuerza - enemigo.defensa)
@@ -36,57 +36,89 @@ class Personaje:
     def atacar(self, enemigo):
         daño = self.daño(enemigo)
         enemigo.vida = max(0, enemigo.vida - daño)
-        resultado = f"{self.nombre} ha realizado {daño} puntos de daño a {enemigo.nombre}."
         if enemigo.esta_vivo():
-            resultado += f" La vida de {enemigo.nombre} ahora es {enemigo.vida}."
+            return f"⚔️ {self.nombre} infligió {daño} puntos de daño a {enemigo.nombre}. ❤️ {enemigo.nombre} ahora tiene {enemigo.vida} de vida."
         else:
-            resultado += f" {enemigo.nombre} ha muerto."
-            enemigo.morir()
-        return resultado
+            return f"⚔️ {self.nombre} infligió {daño} puntos de daño a {enemigo.nombre}. 💀 {enemigo.morir()}"
+
+# Clase Guerrero
+class Guerrero(Personaje):
+    def __init__(self, nombre, fuerza, inteligencia, defensa, vida, espada):
+        super().__init__(nombre, fuerza, inteligencia, defensa, vida)
+        self.espada = espada
+
+    def cambiar_arma(self, opcion):
+        if opcion == 1:
+            self.espada = 8
+            return "🔪 Cambiaste tu arma a Acero Valyrio (daño 8)."
+        elif opcion == 2:
+            self.espada = 10
+            return "🗡️ Cambiaste tu arma a Matadragones (daño 10)."
+        else:
+            return "❌ Número de arma incorrecta."
+
+    def atributos(self):
+        base_atributos = super().atributos()
+        return base_atributos + f"- 🗡️ Espada: {self.espada}\n"
+
+    def daño(self, enemigo):
+        return max(0, self.fuerza * self.espada - enemigo.defensa)
+
+# Clase Mago
+class Mago(Personaje):
+    def __init__(self, nombre, fuerza, inteligencia, defensa, vida, libro):
+        super().__init__(nombre, fuerza, inteligencia, defensa, vida)
+        self.libro = libro
+
+    def atributos(self):
+        base_atributos = super().atributos()
+        return base_atributos + f"- 📖 Libro: {self.libro}\n"
+
+    def daño(self, enemigo):
+        return max(0, self.inteligencia * self.libro - enemigo.defensa)
+
+# Instancias de los personajes
+goku = Personaje("Goku", 20, 15, 10, 100)
+guts = Guerrero("Guts", 20, 15, 10, 100, 5)
+vanessa = Mago("Vanessa", 20, 15, 10, 100, 5)
 
 # Aplicación Streamlit
-st.title("Simulación de Personajes en Streamlit")
+st.title("⚔️ Simulador de Combate RPG con Streamlit")
+st.header("Atributos de los Personajes")
 
-# Crear Personaje Principal
-st.header("Personaje Principal")
-nombre = st.text_input("Nombre del personaje", "Ricardo", key="nombre_personaje")
-fuerza = st.number_input("Fuerza inicial", value=10, key="fuerza_personaje")
-inteligencia = st.number_input("Inteligencia inicial", value=1, key="inteligencia_personaje")
-defensa = st.number_input("Defensa inicial", value=5, key="defensa_personaje")
-vida = st.number_input("Vida inicial", value=100, key="vida_personaje")
-mi_personaje = Personaje(nombre, fuerza, inteligencia, defensa, vida)
+# Mostrar atributos iniciales
+if st.button("Mostrar atributos de todos los personajes"):
+    st.text(goku.atributos())
+    st.text(guts.atributos())
+    st.text(vanessa.atributos())
 
-# Crear Enemigo
-st.header("Enemigo")
-nombre_enemigo = st.text_input("Nombre del enemigo", "Jose A", key="nombre_enemigo")
-fuerza_enemigo = st.number_input("Fuerza inicial", value=8, key="fuerza_enemigo")
-inteligencia_enemigo = st.number_input("Inteligencia inicial", value=5, key="inteligencia_enemigo")
-defensa_enemigo = st.number_input("Defensa inicial", value=3, key="defensa_enemigo")
-vida_enemigo = st.number_input("Vida inicial", value=100, key="vida_enemigo")
-mi_enemigo = Personaje(nombre_enemigo, fuerza_enemigo, inteligencia_enemigo, defensa_enemigo, vida_enemigo)
+# Atacar entre personajes
+st.header("⚔️ Realizar Ataques")
 
-# Mostrar atributos
-if st.button("Mostrar atributos de ambos personajes"):
-    st.text("Atributos del Personaje Principal:")
-    st.text(mi_personaje.atributos())
-    st.text("Atributos del Enemigo:")
-    st.text(mi_enemigo.atributos())
+# Goku ataca a Guts
+if st.button("Goku ataca a Guts"):
+    resultado = goku.atacar(guts)
+    st.success(resultado)
 
-# Realizar ataque
-st.header("Realizar ataque")
-if st.button("Atacar enemigo"):
-    resultado_ataque = mi_personaje.atacar(mi_enemigo)
-    st.success(resultado_ataque)
-    st.text("Atributos del enemigo después del ataque:")
-    st.text(mi_enemigo.atributos())
+# Guts ataca a Vanessa
+if st.button("Guts ataca a Vanessa"):
+    resultado = guts.atacar(vanessa)
+    st.success(resultado)
 
-# Subir nivel al personaje principal
-st.header("Subir de nivel")
-fuerza_nueva = st.number_input("Incremento de fuerza", value=1, key="fuerza_subir")
-inteligencia_nueva = st.number_input("Incremento de inteligencia", value=2, key="inteligencia_subir")
-defensa_nueva = st.number_input("Incremento de defensa", value=0, key="defensa_subir")
+# Vanessa ataca a Goku
+if st.button("Vanessa ataca a Goku"):
+    resultado = vanessa.atacar(goku)
+    st.success(resultado)
 
-if st.button("Subir nivel del personaje principal"):
-    mi_personaje.subir_nivel(fuerza_nueva, inteligencia_nueva, defensa_nueva)
-    st.success("Personaje principal subió de nivel.")
-    st.text(mi_personaje.atributos())
+# Cambiar arma del Guerrero
+st.header("🗡️ Cambiar Arma de Guts")
+opcion_arma = st.radio(
+    "Selecciona un arma para Guts:",
+    options=["Acero Valyrio (daño 8)", "Matadragones (daño 10)"],
+    index=0,
+)
+if st.button("Cambiar arma de Guts"):
+    if opcion_arma == "Acero Valyrio (daño 8)":
+        st.info(guts.cambiar_arma(1))
+    else:
+        st.info(guts.cambiar_arma(2))
